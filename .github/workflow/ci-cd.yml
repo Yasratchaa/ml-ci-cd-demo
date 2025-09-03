@@ -30,8 +30,9 @@ jobs:
         run: pytest
 
       - name: Deploy to GitHub Pages
-        uses: streamlit/streamlit-gh-pages@v1
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          app: app.py
-          python-version: '3.10'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+
 
