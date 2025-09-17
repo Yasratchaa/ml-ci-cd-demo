@@ -1,11 +1,25 @@
+from sklearn.datasets import fetch_california_housing
+from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.datasets import make_regression
-import joblib
+import pickle
 
-# generate data dummy
-X, y = make_regression(n_samples=100, n_features=1, noise=0.1, random_state=42)
-model = LinearRegression().fit(X, y)
+def train_and_save_model():
+    # Load California housing dataset
+    data = fetch_california_housing()
+    X, y = data.data, data.target
 
-# simpan model
-joblib.dump(model, "model.pkl")
-print("Model trained and saved as model.pkl")
+    # Split dataset
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Train model
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+
+    # Simpan model
+    with open("model.pkl", "wb") as f:
+        pickle.dump(model, f)
+
+    print("✅ Model California Housing berhasil dilatih dan disimpan ke model.pkl")
+
+if __name__ == "__main__":
+    train_and_save_model()

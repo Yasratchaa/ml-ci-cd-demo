@@ -1,10 +1,12 @@
 import os
-import joblib
+import pickle
+import numpy as np
 
 def test_model_exists():
     assert os.path.exists("model.pkl")
 
 def test_model_predict():
-    model = joblib.load("model.pkl")
-    y_pred = model.predict([[1.0]])
-    assert isinstance(y_pred[0], float)
+    with open("model.pkl", "rb") as f:
+        model = pickle.load(f)
+    y_pred = model.predict(np.random.rand(1, 8))  # 8 fitur California housing
+    assert y_pred.shape == (1,)
