@@ -1,0 +1,4 @@
+/data/
+!data/*.dvc
+/model.pkl
+/model.pkl.dvc

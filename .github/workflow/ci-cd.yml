@@ -1,4 +1,4 @@
-name: CI/CD ML California Housing
+name: CI/CD ML with DVC
 
 on:
   push:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Setup Python
@@ -23,26 +23,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Train model
-        run: python train.py
+      - name: Run DVC pipeline
+        run: |
+          dvc repro
 
       - name: Run tests
         run: pytest
-
-      # Build Docker image
-      - name: Build Docker image
-        run: docker build -t ml-cicd-california .
-
-      # (Optional) Push to Docker Hub
-      - name: Login to Docker Hub
-        if: github.ref == 'refs/heads/main'
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Push Docker image
-        if: github.ref == 'refs/heads/main'
-        run: |
-          docker tag ml-cicd-california ${{ secrets.DOCKER_USERNAME }}/ml-cicd-california:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/ml-cicd-california:latest

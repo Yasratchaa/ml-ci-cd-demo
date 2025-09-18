@@ -1,25 +1,29 @@
-from sklearn.datasets import fetch_california_housing
-from sklearn.model_selection import train_test_split
+import pandas as pd
 from sklearn.linear_model import LinearRegression
-import pickle
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_squared_error
+import joblib
 
-def train_and_save_model():
-    # Load California housing dataset
-    data = fetch_california_housing()
-    X, y = data.data, data.target
+# Load dataset dari file CSV
+df = pd.read_csv("data/housing.csv")
 
-    # Split dataset
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X = df.drop("MedHouseValue", axis=1)
+y = df["MedHouseValue"]
 
-    # Train model
-    model = LinearRegression()
-    model.fit(X_train, y_train)
+# Split dataset
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
 
-    # Simpan model
-    with open("model.pkl", "wb") as f:
-        pickle.dump(model, f)
+# Train model
+model = LinearRegression()
+model.fit(X_train, y_train)
 
-    print("✅ Model California Housing berhasil dilatih dan disimpan ke model.pkl")
+# Evaluasi model
+y_pred = model.predict(X_test)
+rmse = mean_squared_error(y_test, y_pred, squared=False)
+print(f"✅ Model trained. RMSE: {rmse:.2f}")
 
-if __name__ == "__main__":
-    train_and_save_model()
+# Simpan model
+joblib.dump(model, "model.pkl")
+print("✅ Model disimpan ke model.pkl")
